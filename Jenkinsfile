@@ -19,7 +19,6 @@ pipeline {
                 bat '"C:\\Users\\HP\\AppData\\Local\\Programs\\Python\\Python312\\python.exe" -m venv venv'
                 bat '.\\venv\\Scripts\\activate && .\\venv\\Scripts\\python.exe -m pip install --upgrade pip'
                 bat '.\\venv\\Scripts\\activate && .\\venv\\Scripts\\python.exe -m pip install -r requirements.txt'
-                bat '.\\venv\\Scripts\\activate && .\\venv\\Scripts\\python.exe -m pip install pytest'
             }
         }
 
