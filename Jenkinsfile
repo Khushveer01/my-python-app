@@ -1,6 +1,5 @@
 pipeline {
     agent any
-
     environment {
         AZURE_CREDENTIALS_ID = 'azure-service-principal11'
         RESOURCE_GROUP = 'rg-jenkins'
@@ -14,15 +13,23 @@ pipeline {
             }
         }
 
-        stage('Set Up Python Environment') {
+        stage('Set Up Python') {
             steps {
-                bat '"C:\\Users\\HP\\AppData\\Local\\Programs\\Python\\Python312\\python.exe" -m venv venv'
-                bat '.\\venv\\Scripts\\activate && .\\venv\\Scripts\\python.exe -m pip install --upgrade pip'
-                bat '.\\venv\\Scripts\\activate && .\\venv\\Scripts\\python.exe -m pip install -r requirements.txt'
+                bat 'python -m venv venv'
+                bat 'call venv\\Scripts\\activate && pip install -r requirements.txt'
             }
         }
 
-        stage('Deploy') {
+       stage('Publish') {
+            steps {
+                bat '''
+                powershell Compress-Archive -Path * -DestinationPath app.zip -Force
+                '''
+            }
+        }
+
+        
+          stage('Deploy') {
             steps {
                 withCredentials([azureServicePrincipal(credentialsId: AZURE_CREDENTIALS_ID)]) {
                     bat '''
@@ -41,12 +48,13 @@ pipeline {
         }
     }
 
+
     post {
-        failure {
-            echo 'Deployment Failed!'
-        }
         success {
             echo 'Deployment Successful!'
+        }
+        failure {
+            echo 'Deployment Failed!'
         }
     }
 }
